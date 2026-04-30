@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>FlixNChill | The Social Network for Screen Culture</title>
+    <meta name="title" content="FlixNChill | The Social Network for Screen Culture">
+    <meta name="description" content="Discover movies via AI vibe search, join exclusive Cine-Clubs, track your cinematic DNA, and debate hot takes. The ultimate social ecosystem for film lovers.">
+    <meta name="keywords" content="social network, movies, film review, cine-clubs, ai movie search, cinematic identity, editz feed, screen culture, watch party">
+    <meta name="author" content="Soltrix Studios">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    
+    <!-- Canonical URL (Replace with actual domain later) -->
+    <link rel="canonical" href="https://www.flixnchill.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.flixnchill.com/">
+    <meta property="og:title" content="FlixNChill | Sync Your Cinema">
+    <meta property="og:description" content="The high-scale social ecosystem for screen culture. Dive into exclusive Cine-Clubs, build your cinematic identity, and never watch alone.">
+    <meta property="og:image" content="image_010159.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.flixnchill.com/">
+    <meta property="twitter:title" content="FlixNChill | Sync Your Cinema">
+    <meta property="twitter:description" content="The high-scale social ecosystem for screen culture. Dive into exclusive Cine-Clubs, build your cinematic identity, and never watch alone.">
+    <meta property="twitter:image" content="image_010159.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="image_010159.png">
+
+    <!-- Structured Data for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "FlixNChill",
+      "applicationCategory": "EntertainmentApplication",
+      "operatingSystem": "Web, iOS, Android",
+      "description": "The high-scale social ecosystem for screen culture. Discover movies, join Cine-Clubs, and build your cinematic identity.",
+      "image": "https://www.flixnchill.com/image_010159.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Soltrix Studios",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.flixnchill.com/image_010159.png"
+        }
+      }
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Supabase Setup -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #030305;
+            --bg-panel: rgba(15, 15, 20, 0.6);
+            --border-glow: rgba(255, 46, 99, 0.3);
+            --primary: #FF2E63;
+            --secondary: #08D9D6;
+            --text-main: #FFFFFF;
+            --text-muted: #8E8E93;
+            --fire: #FF512F;
+            --ice: #00C9FF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+            cursor: none; /* Custom cursor */
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Elements */
+        .ambient-orbs {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: floatOrb 20s infinite ease-in-out alternate;
+        }
+        .orb-1 { width: 40vw; height: 40vw; background: rgba(255, 46, 99, 0.15); top: -10%; left: -10%; }
+        .orb-2 { width: 50vw; height: 50vw; background: rgba(8, 217, 214, 0.1); bottom: -20%; right: -10%; animation-delay: -5s; }
+        .orb-3 { width: 30vw; height: 30vw; background: rgba(138, 43, 226, 0.1); top: 40%; left: 40%; animation-delay: -10s; }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(10vw, 10vh) scale(1.2); }
+        }
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.05;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-outline {
+            position: fixed;
+            top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px; height: 8px;
+            background: var(--secondary);
+        }
+        .cursor-outline {
+            width: 40px; height: 40px;
+            border: 2px solid var(--primary);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        /* Typography & Globals */
+        h1, h2, h3, .brand {
+            font-family: 'Syncopate', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .nav-logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .nav-logo-img {
+            width: 45px;
+            height: 45px;
+            filter: drop-shadow(0 0 10px rgba(8, 217, 214, 0.5));
+            animation: slowSpin 20s linear infinite;
+        }
+
+        @keyframes slowSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Navigation */
+        nav {
+            padding: 2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .btn-glitch {
+            background: transparent;
+            color: white;
+            border: 1px solid var(--primary);
+            padding: 0.8rem 2rem;
+            border-radius: 4px;
+            font-weight: 700;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        .btn-glitch::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 46, 99, 0.4), transparent);
+            transition: all 0.5s;
+        }
+        .btn-glitch:hover {
+            box-shadow: 0 0 20px var(--border-glow);
+            background: rgba(255, 46, 99, 0.1);
+        }
+        .btn-glitch:hover::before {
+            left: 100%;
+        }
+
+        /* Hero */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 5%;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 40px rgba(255,255,255,0.1);
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        /* Interactive Taste DNA Visualizer */
+        .dna-container {
+            margin-top: 2rem;
+            display: flex;
+            gap: 15px;
+            height: 60px;
+            align-items: flex-end;
+        }
+        .dna-bar {
+            width: 8px;
+            background: var(--surface-border);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .dna-fill {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(0deg, var(--primary), var(--secondary));
+            height: 0%;
+            transition: height 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Gamified Features */
+        .features {
+            padding: 10rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .grid-3d {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            perspective: 1000px;
+        }
+
+        .card-3d {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-3d::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255, 46, 99, 0.15), transparent 80%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card-3d:hover::after { opacity: 1; }
+
+        .card-content {
+            transform: translateZ(30px); /* 3D pop effect */
+        }
+
+        .card-icon {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 10px rgba(8, 217, 214, 0.5));
+        }
+
+        .card-3d h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .card-3d p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Interactive Hot Take Section */
+        .hot-take-demo {
+            margin: 10rem 5%;
+            padding: 5rem;
+            background: linear-gradient(135deg, rgba(255, 81, 47, 0.05), rgba(0, 201, 255, 0.05));
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vs-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .vote-btn {
+            padding: 1.5rem 3rem;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            transition: transform 0.2s, filter 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .vote-btn.fire {
+            background: linear-gradient(45deg, #FF512F, #DD2476);
+            box-shadow: 0 10px 30px rgba(255, 81, 47, 0.3);
+        }
+        .vote-btn.ice {
+            background: linear-gradient(45deg, #00C9FF, #92FE9D);
+            box-shadow: 0 10px 30px rgba(0, 201, 255, 0.3);
+        }
+        .vote-btn:hover {
+            transform: scale(1.05) translateY(-5px);
+            filter: brightness(1.2);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            max-width: 600px;
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            margin: 3rem auto 0;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+        }
+        .progress-fire { width: 50%; background: var(--fire); transition: width 0.5s ease; }
+        .progress-ice { width: 50%; background: var(--ice); transition: width 0.5s ease; }
+
+        /* Editz Feed Mockup */
+        .editz-section {
+            padding: 5rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        @media(max-width: 900px) {
+            .editz-section { flex-direction: column; text-align: center; }
+        }
+
+        .phone-mockup {
+            width: 300px;
+            height: 600px;
+            border: 12px solid #222;
+            border-radius: 40px;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255, 46, 99, 0.2);
+            transform: rotate(-5deg);
+            transition: transform 0.5s ease;
+        }
+        .phone-mockup:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+        .mockup-video {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            position: relative;
+        }
+        .mockup-ui {
+            position: absolute;
+            bottom: 20px; right: 10px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .ui-circle {
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        /* Why Join & FAQ Sections */
+        .why-join-section {
+            padding: 8rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        @media(max-width: 900px) {
+            .why-join-section { grid-template-columns: 1fr; text-align: center; }
+        }
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        @media(max-width: 900px) {
+            .benefit-item { flex-direction: column; align-items: center; text-align: center; }
+        }
+        .benefit-icon {
+            color: var(--primary);
+            background: rgba(255, 46, 99, 0.1);
+            padding: 15px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .faq-section {
+            padding: 5rem 5% 10rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 1rem;
+        }
+        .faq-question {
+            width: 100%;
+            text-align: left;
+            padding: 1.5rem 0;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.3s;
+        }
+        .faq-question:hover { color: var(--secondary); }
+        .faq-icon { transition: transform 0.3s; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); color: var(--secondary); }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding-bottom: 1.5rem;
+        }
+
+        /* Editz Mockup Enhancements */
+        .mockup-creator {
+            position: absolute;
+            bottom: 80px; left: 15px;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 10;
+        }
+        .creator-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: 2px solid #fff;
+        }
+        .creator-info {
+            display: flex; flex-direction: column;
+            text-align: left;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        .creator-info strong { font-size: 0.9rem; font-family: 'Space Grotesk'; }
+        .creator-info span { font-size: 0.7rem; color: #ccc; }
+        .floating-emojis {
+            position: absolute;
+            bottom: 120px; right: 20px;
+            font-size: 1.5rem;
+            animation: floatUp 3s infinite ease-in;
+            opacity: 0;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+        .progress-line {
+            position: absolute;
+            bottom: 5px; left: 10px; right: 10px;
+            height: 3px; background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+        .progress-line-fill {
+            height: 100%; width: 45%;
+            background: #fff; border-radius: 3px;
+            box-shadow: 0 0 10px #fff;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .soltrix {
+            margin-top: 10px;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: #555;
+        }
+
+        .interactive-hover { cursor: none; }
+
+        /* Waitlist Modal Styles */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 10000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-content {
+            background: var(--bg-panel); border: 1px solid var(--border-glow);
+            border-radius: 20px; padding: 3rem; max-width: 500px; width: 90%;
+            text-align: center; transform: translateY(30px) scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 20px 60px rgba(255, 46, 99, 0.2);
+            position: relative;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
+        .modal-close {
+            position: absolute; top: 15px; right: 15px;
+            background: none; border: none; color: var(--text-muted);
+            padding: 5px; transition: color 0.3s;
+        }
+        .modal-close:hover { color: var(--primary); }
+        .neon-input {
+            width: 100%; padding: 1rem; margin: 2rem 0 1rem;
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; color: white; font-family: 'Space Grotesk';
+            font-size: 1rem; outline: none; transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .neon-input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(8, 217, 214, 0.2);
+        }
+        .waitlist-msg { font-size: 0.9rem; margin-top: 10px; height: 20px; }
+        .waitlist-msg.error { color: var(--fire); }
+        .waitlist-msg.success { color: var(--secondary); font-family: 'Syncopate'; }
+    </style>
+</head>
+<body>
+
+    <!-- SVG Symbol Definition for Logo -->
+    <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
+        <symbol id="flix-logo" viewBox="0 0 240 240">
+            <defs>
+                <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+            </defs>
+            <g style="transform-origin: 120px 120px;">
+                <g transform="translate(120, 120) rotate(0)">
+                    <path d="M -22 -75 C -45 -75 -40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M 22 -75 C 45 -75 40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M -10 -63 L 10 -63 L 6 -48 L -6 -48 Z" fill="#00F2FF" />
+                    <rect x="-22" y="-90" width="44" height="26" rx="6" fill="#0B0E14" stroke="#2E5BFF" stroke-width="4" filter="url(#neonGlow)" />
+                    <rect x="-16" y="-84" width="32" height="14" rx="2" fill="#2E5BFF" opacity="0.15" />
+                </g>
+                <g transform="translate(120, 120) rotate(45)">
+                    <path d="M -22 -75 C -45 -75 -40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M 22 -75 C 45 -75 40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M -10 -63 L 10 -63 L 6 -48 L -6 -48 Z" fill="#00F2FF" />
+                    <rect x="-22" y="-90" width="44" height="26" rx="6" fill="#0B0E14" stroke="#2E5BFF" stroke-width="4" filter="url(#neonGlow)" />
+                    <rect x="-16" y="-84" width="32" height="14" rx="2" fill="#2E5BFF" opacity="0.15" />
+                </g>
+                <g transform="translate(120, 120) rotate(90)">
+                    <path d="M -22 -75 C -45 -75 -40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M 22 -75 C 45 -75 40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M -10 -63 L 10 -63 L 6 -48 L -6 -48 Z" fill="#00F2FF" />
+                    <rect x="-22" y="-90" width="44" height="26" rx="6" fill="#0B0E14" stroke="#2E5BFF" stroke-width="4" filter="url(#neonGlow)" />
+                    <rect x="-16" y="-84" width="32" height="14" rx="2" fill="#2E5BFF" opacity="0.15" />
+                </g>
+                <g transform="translate(120, 120) rotate(135)">
+                    <path d="M -22 -75 C -45 -75 -40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M 22 -75 C 45 -75 40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M -10 -63 L 10 -63 L 6 -48 L -6 -48 Z" fill="#00F2FF" />
+                    <rect x="-22" y="-90" width="44" height="26" rx="6" fill="#0B0E14" stroke="#2E5BFF" stroke-width="4" filter="url(#neonGlow)" />
+                    <rect x="-16" y="-84" width="32" height="14" rx="2" fill="#2E5BFF" opacity="0.15" />
+                </g>
+                <g transform="translate(120, 120) rotate(180)">
+                    <path d="M -22 -75 C -45 -75 -40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M 22 -75 C 45 -75 40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M -10 -63 L 10 -63 L 6 -48 L -6 -48 Z" fill="#00F2FF" />
+                    <rect x="-22" y="-90" width="44" height="26" rx="6" fill="#0B0E14" stroke="#2E5BFF" stroke-width="4" filter="url(#neonGlow)" />
+                    <rect x="-16" y="-84" width="32" height="14" rx="2" fill="#2E5BFF" opacity="0.15" />
+                </g>
+                <g transform="translate(120, 120) rotate(225)">
+                    <path d="M -22 -75 C -45 -75 -40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M 22 -75 C 45 -75 40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M -10 -63 L 10 -63 L 6 -48 L -6 -48 Z" fill="#00F2FF" />
+                    <rect x="-22" y="-90" width="44" height="26" rx="6" fill="#0B0E14" stroke="#2E5BFF" stroke-width="4" filter="url(#neonGlow)" />
+                    <rect x="-16" y="-84" width="32" height="14" rx="2" fill="#2E5BFF" opacity="0.15" />
+                </g>
+                <g transform="translate(120, 120) rotate(270)">
+                    <path d="M -22 -75 C -45 -75 -40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M 22 -75 C 45 -75 40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M -10 -63 L 10 -63 L 6 -48 L -6 -48 Z" fill="#00F2FF" />
+                    <rect x="-22" y="-90" width="44" height="26" rx="6" fill="#0B0E14" stroke="#2E5BFF" stroke-width="4" filter="url(#neonGlow)" />
+                    <rect x="-16" y="-84" width="32" height="14" rx="2" fill="#2E5BFF" opacity="0.15" />
+                </g>
+                <g transform="translate(120, 120) rotate(315)">
+                    <path d="M -22 -75 C -45 -75 -40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M 22 -75 C 45 -75 40 -50 0 -50" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" />
+                    <path d="M -10 -63 L 10 -63 L 6 -48 L -6 -48 Z" fill="#00F2FF" />
+                    <rect x="-22" y="-90" width="44" height="26" rx="6" fill="#0B0E14" stroke="#2E5BFF" stroke-width="4" filter="url(#neonGlow)" />
+                    <rect x="-16" y="-84" width="32" height="14" rx="2" fill="#2E5BFF" opacity="0.15" />
+                </g>
+            </g>
+            <circle cx="120" cy="120" r="16" fill="#00F2FF" filter="url(#neonGlow)" />
+        </symbol>
+    </svg>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Dynamic Ambient Background -->
+    <div class="ambient-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="noise-overlay"></div>
+
+    <nav>
+        <a href="#" class="nav-logo-container interactive-hover">
+            <svg class="nav-logo-img"><use href="#flix-logo"></use></svg>
+            <div class="brand">FLIXNCHILL</div>
+        </a>
+        <button class="btn-glitch interactive-hover" onclick="openModal()">Initialize Link</button>
+    </nav>
+
+    <section class="hero">
+        <h1 class="reveal-text">Sync Your <br><span style="color: var(--primary);">Cinema.</span></h1>
+        <p class="reveal-text" style="transition-delay: 0.2s;">The high-scale social ecosystem for screen culture. Dive into exclusive Cine-Clubs, build your cinematic identity, and never watch alone.</p>
+        
+        <div class="dna-container reveal-text interactive-hover" style="transition-delay: 0.4s;" id="dna-trigger">
+            <!-- DNA Bars generated via JS -->
+        </div>
+        <p class="reveal-text" style="font-size: 0.8rem; margin-top: 1rem; color: var(--secondary); font-family: 'Syncopate', sans-serif; transition-delay: 0.5s;">Hover to Extract Taste DNA</p>
+    </section>
+
+    <section class="features">
+        <h2 class="reveal-text" style="text-align: center; margin-bottom: 5rem; font-size: 2.5rem;">Core Systems</h2>
+        
+        <div class="grid-3d">
+            <div class="card-3d interactive-hover">
+                <div class="card-content">
+                    <i data-lucide="users" class="card-icon" width="40" height="40"></i>
+                    <h3>Tribes & Cine-Clubs</h3>
+                    <p>Enter the inner circle. Pool movie suggestions, initiate a group vote, and watch your shared progress sync in real-time. Public tribes for genres, private clubs for your crew.</p>
+                </div>
+            </div>
+
+            <div class="card-3d interactive-hover">
+                <div class="card-content">
+                    <i data-lucide="fingerprint" class="card-icon" width="40" height="40"></i>
+                    <h3>Taste DNA</h3>
+                    <p>Your cinematic fingerprint visualized. Our algorithm breaks down your viewing history into highly specific Taste Vectors. Find Cine-Soulmates with absolute mathematical precision.</p>
+                </div>
+            </div>
+
+            <div class="card-3d interactive-hover">
+                <div class="card-content">
+                    <i data-lucide="sparkles" class="card-icon" width="40" height="40"></i>
+                    <h3>AI Vibe Engine</h3>
+                    <p>Stop typing titles. Search by mood, hyper-specific aesthetic prompts, or upload a reference image. Drop in a photo of a neon-drenched rainy street, and our AI locates the exact cinematic match.</p>
+                </div>
+            </div>
+
+            <div class="card-3d interactive-hover">
+                <div class="card-content">
+                    <i data-lucide="database" class="card-icon" width="40" height="40"></i>
+                    <h3>Advanced Media Logs</h3>
+                    <p>The ultimate command center for your viewing life. Track history with granular, multidimensional ratings, hyper-detailed reviews, and synchronized state management.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="hot-take-demo reveal-text">
+        <h2>Interactive Hot Takes</h2>
+        <p style="color: var(--text-muted); margin-top: 1rem;">Daily global debates. Defend your cinematic thesis. Cast your vote to alter the global equilibrium.</p>
+        
+        <h3 style="margin-top: 3rem; font-size: 1.5rem; letter-spacing: 2px;">"CGI has ruined practical filmmaking."</h3>
+        
+        <div class="vs-container">
+            <button class="vote-btn fire interactive-hover" onclick="castVote('fire')">
+                <i data-lucide="flame"></i> ABSOLUTELY (FIRE)
+            </button>
+            <button class="vote-btn ice interactive-hover" onclick="castVote('ice')">
+                <i data-lucide="snowflake"></i> NONSENSE (ICE)
+            </button>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-fire" id="bar-fire"></div>
+            <div class="progress-ice" id="bar-ice"></div>
+        </div>
+        <p id="vote-feedback" style="margin-top: 1rem; font-family: 'Syncopate'; font-size: 0.8rem; opacity: 0; transition: opacity 0.3s;"></p>
+    </section>
+
+    <section class="editz-section reveal-text">
+        <div style="flex: 1;">
+            <h2 style="font-size: 3rem; margin-bottom: 1.5rem;">The Editz Feed</h2>
+            <p style="color: var(--text-muted); font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+                A premium, infinite canvas dedicated to creator-driven cinematic highlights. Scored with AI-powered audio libraries. 
+                <br><br>
+                Discover your next obsession in 15 seconds. Every edit is a direct portal—tap the screen and instantly access the source media's deep-dive details.
+            </p>
+            <button class="btn-glitch interactive-hover" onclick="openModal()">Explore Creators</button>
+        </div>
+        <div class="phone-mockup interactive-hover">
+            <div class="mockup-video">
+                <div style="position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(255,46,99,0.2), transparent); animation: pulse 4s infinite;"></div>
+                <div style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); color: rgba(255,255,255,0.8); font-family: 'Syncopate'; font-size: 2.2rem; font-weight: 800; text-align: center; text-shadow: 0 0 20px var(--primary);">
+                    SCROLL<br>THE<br>ART
+                </div>
+                
+                <div class="mockup-creator">
+                    <div class="creator-avatar"></div>
+                    <div class="creator-info">
+                        <strong>@neon_noir_edits</strong>
+                        <span>Added to <em>Cyberpunk Vibes</em></span>
+                    </div>
+                </div>
+
+                <div class="floating-emojis">🔥</div>
+                <div class="floating-emojis" style="animation-delay: 1.5s; right: 30px;">✨</div>
+
+                <div class="mockup-ui">
+                    <div class="ui-circle"><i data-lucide="heart" width="20"></i></div>
+                    <div class="ui-circle"><i data-lucide="message-circle" width="20"></i></div>
+                    <div class="ui-circle"><i data-lucide="share-2" width="20"></i></div>
+                </div>
+                <!-- Link to Source Mockup UI -->
+                <div style="position: absolute; bottom: 25px; left: 15px; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 20px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.2);">
+                    <i data-lucide="film" width="14" style="color: var(--primary);"></i>
+                    <span style="font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;">VIEW SOURCE</span>
+                </div>
+
+                <div class="progress-line">
+                    <div class="progress-line-fill"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="why-join-section reveal-text">
+        <div>
+            <h2 style="font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; margin-bottom: 1.5rem;">Why Join The <br><span style="color: var(--secondary);">Inner Circle?</span></h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem;">The era of scrolling endlessly through streaming menus is over. FlixNChill is built for those who want to experience cinema, not just consume it.</p>
+            <button class="btn-glitch interactive-hover" onclick="openModal()">Secure Your Handle</button>
+        </div>
+        <div>
+            <div class="benefit-item">
+                <div class="benefit-icon"><i data-lucide="crosshair"></i></div>
+                <div>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; font-family: 'Space Grotesk'; font-weight: 700; text-transform: uppercase;">End Algorithm Fatigue</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Stop relying on generic streaming recommendations. Discover based on exact vibes, AI prompts, and human curation from your trusted circles.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon"><i data-lucide="shield"></i></div>
+                <div>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; font-family: 'Space Grotesk'; font-weight: 700; text-transform: uppercase;">Claim Your Identity</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Your cinematic taste is completely unique. Secure your @handle before the public release and start building your definitive Taste DNA profile today.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon"><i data-lucide="zap"></i></div>
+                <div>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; font-family: 'Space Grotesk'; font-weight: 700; text-transform: uppercase;">Maximum Engagement</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Debate hot takes, rank your favorites down to the granular level, and sync your group's viewing progress across all platforms.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section reveal-text">
+        <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2.5rem;">FAQ</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <button class="faq-question interactive-hover">Is FlixNChill a streaming service? <i data-lucide="chevron-down" class="faq-icon"></i></button>
+                <div class="faq-answer">
+                    <p>No, we don't host or stream movies. FlixNChill is the ultimate social layer that connects your viewing life. You use us to discover, debate, and track what to watch, and then you watch it on the streaming platforms you already pay for.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question interactive-hover">How does the AI Vibe Engine work? <i data-lucide="chevron-down" class="faq-icon"></i></button>
+                <div class="faq-answer">
+                    <p>Instead of searching by a movie's title, you search by highly specific moods, aesthetic text prompts, or even reference images. Our AI cross-references thousands of cinematic data points to find the exact match for the vibe you're looking for.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question interactive-hover">What are Cine-Clubs? <i data-lucide="chevron-down" class="faq-icon"></i></button>
+                <div class="faq-answer">
+                    <p>Cine-Clubs are private, invite-only spaces for you and your friends. You can pool movie suggestions, vote on what to watch next, and sync your group's viewing progress to ensure everyone is on the same page.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question interactive-hover">When do I get access? <i data-lucide="chevron-down" class="faq-icon"></i></button>
+                <div class="faq-answer">
+                    <p>We are currently operating in a closed beta phase. By securing your comm-link on the waitlist today, you guarantee early access and reserve your unique handle before the public rollout.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <svg style="width: 60px; height: 60px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(8, 217, 214, 0.2));"><use href="#flix-logo"></use></svg>
+        <div class="brand" style="font-size: 1rem;">FLIXNCHILL</div>
+        <div style="margin: 10px 0;">© 2026 FlixNChill. All rights reserved.</div>
+        <div class="soltrix">POWERED BY SOLTRIX STUDIOS</div>
+    </footer>
+
+    <!-- Waitlist Modal -->
+    <div class="modal-overlay" id="waitlist-modal">
+        <div class="modal-content interactive-hover">
+            <button class="modal-close interactive-hover" onclick="closeModal()">
+                <i data-lucide="x"></i>
+            </button>
+            <div id="modal-form-view">
+                <h2 style="font-size: 1.8rem; margin-bottom: 1rem;">SECURE ACCESS</h2>
+                <p style="color: var(--text-muted);">Enter your name and comm-link to join the early access queue.</p>
+                
+                <form id="waitlist-form" onsubmit="handleWaitlistSubmit(event)">
+                    <input type="text" id="waitlist-name" class="neon-input interactive-hover" placeholder="ENTER_NAME" required style="margin-bottom: 0;">
+                    <input type="email" id="waitlist-email" class="neon-input interactive-hover" placeholder="ENTER_EMAIL@DOMAIN.COM" required>
+                    <button type="submit" class="btn-glitch interactive-hover" style="width: 100%;" id="waitlist-submit-btn">Lock In</button>
+                </form>
+                <div id="waitlist-msg" class="waitlist-msg"></div>
+            </div>
+            
+            <div id="modal-success-view" style="display: none; padding: 2rem 0;">
+                <i data-lucide="check-circle" style="color: var(--secondary); width: 64px; height: 64px; margin: 0 auto 1.5rem; display: block;"></i>
+                <h2 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--secondary);">COMM-LINK ESTABLISHED</h2>
+                <p style="color: var(--text-muted);">Access secured. Standby for your invite link.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // -----------------------------------------
+        // Supabase Waitlist Logic
+        // -----------------------------------------
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // Replace with your URL
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Replace with your Anon Key
+        
+        // Initialize securely so UI continues working smoothly if keys aren't added yet
+        let supabaseClient = null;
+        if(SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        const modal = document.getElementById('waitlist-modal');
+        const msgEl = document.getElementById('waitlist-msg');
+        const nameInput = document.getElementById('waitlist-name');
+        const emailInput = document.getElementById('waitlist-email');
+        const submitBtn = document.getElementById('waitlist-submit-btn');
+        const formView = document.getElementById('modal-form-view');
+        const successView = document.getElementById('modal-success-view');
+
+        function openModal() {
+            modal.classList.add('active');
+            setTimeout(() => nameInput.focus(), 100);
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                msgEl.innerText = '';
+                msgEl.className = 'waitlist-msg';
+                nameInput.value = '';
+                emailInput.value = '';
+                formView.style.display = 'block';
+                successView.style.display = 'none';
+            }, 400);
+        }
+
+        async function handleWaitlistSubmit(e) {
+            e.preventDefault();
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            
+            if(!supabaseClient) {
+                // Front-end Demo fallback if keys haven't been swapped yet
+                submitBtn.innerText = "AUTHENTICATING...";
+                msgEl.innerText = "Simulating connection (Add Supabase keys to save)...";
+                msgEl.className = 'waitlist-msg';
+                
+                setTimeout(() => {
+                    formView.style.display = 'none';
+                    successView.style.display = 'block';
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    submitBtn.innerText = "LOCK IN";
+                }, 1500);
+                return;
+            }
+
+            try {
+                submitBtn.innerText = "UPLOADING...";
+                submitBtn.disabled = true;
+
+                // Push to a 'waitlist' table
+                const { data, error } = await supabaseClient
+                    .from('waitlist')
+                    .insert([{ 
+                        name: name,
+                        email: email
+                    }]);
+
+                if (error) throw error;
+
+                // Show Success Pop-up UI
+                formView.style.display = 'none';
+                successView.style.display = 'block';
+                nameInput.value = '';
+                emailInput.value = '';
+                
+            } catch (error) {
+                console.error('Waitlist Error:', error);
+                msgEl.innerText = "Sorry, waitlist is currently full.";
+                msgEl.className = 'waitlist-msg error';
+            } finally {
+                submitBtn.innerText = "LOCK IN";
+                submitBtn.disabled = false;
+            }
+        }
+
+        // -----------------------------------------
+        // Custom Cursor
+        // -----------------------------------------
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+            
+            // Add slight delay for outline
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        document.querySelectorAll('.interactive-hover').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px';
+                cursorOutline.style.height = '60px';
+                cursorOutline.style.backgroundColor = 'rgba(255, 46, 99, 0.1)';
+                cursorOutline.style.borderColor = 'transparent';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.backgroundColor = 'transparent';
+                cursorOutline.style.borderColor = 'var(--primary)';
+            });
+        });
+
+        // -----------------------------------------
+        // DNA Visualizer Generation & Animation
+        // -----------------------------------------
+        const dnaContainer = document.getElementById('dna-trigger');
+        for(let i=0; i<15; i++) {
+            let bar = document.createElement('div');
+            bar.className = 'dna-bar';
+            bar.style.height = `${Math.random() * 40 + 20}px`;
+            
+            let fill = document.createElement('div');
+            fill.className = 'dna-fill';
+            bar.appendChild(fill);
+            dnaContainer.appendChild(bar);
+        }
+
+        dnaContainer.addEventListener('mouseenter', () => {
+            document.querySelectorAll('.dna-fill').forEach((fill, index) => {
+                setTimeout(() => {
+                    fill.style.height = `${Math.random() * 60 + 40}%`;
+                }, index * 50);
+            });
+        });
+        dnaContainer.addEventListener('mouseleave', () => {
+            document.querySelectorAll('.dna-fill').forEach((fill) => {
+                fill.style.height = '0%';
+            });
+        });
+
+        // -----------------------------------------
+        // 3D Card Tilt Effect
+        // -----------------------------------------
+        const cards = document.querySelectorAll('.card-3d');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Update CSS variables for the radial gradient glow
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+                
+                // Calculate rotation
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -10;
+                const rotateY = ((x - centerX) / centerX) * 10;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+            });
+        });
+
+        // -----------------------------------------
+        // Scroll Reveal Animations
+        // -----------------------------------------
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-text').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Initial reveal for hero
+        setTimeout(() => {
+            document.querySelectorAll('.hero .reveal-text').forEach(el => el.classList.add('visible'));
+        }, 100);
+
+        // -----------------------------------------
+        // Hot Take Interactive Voting
+        // -----------------------------------------
+        let hasVoted = false;
+        function castVote(choice) {
+            if(hasVoted) return;
+            hasVoted = true;
+            
+            const barFire = document.getElementById('bar-fire');
+            const barIce = document.getElementById('bar-ice');
+            const feedback = document.getElementById('vote-feedback');
+            
+            if(choice === 'fire') {
+                barFire.style.width = '78%';
+                barIce.style.width = '22%';
+                feedback.innerHTML = "<span style='color: var(--fire)'>+78% Cinematic Agreement.</span> The global hivemind sides with you.";
+            } else {
+                barIce.style.width = '78%';
+                barFire.style.width = '22%';
+                feedback.innerHTML = "<span style='color: var(--ice)'>Controversial Take Logged.</span> You belong to the 22% resistance.";
+            }
+            
+            feedback.style.opacity = 1;
+            
+            // Disable buttons visually
+            document.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'default';
+                btn.classList.remove('interactive-hover');
+            });
+        }
+
+        // -----------------------------------------
+        // FAQ Accordion Logic
+        // -----------------------------------------
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                // Close other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                // Toggle clicked item
+                item.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
