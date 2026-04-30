@@ -31,10 +31,10 @@
     <meta property="twitter:image" content="https://flixnchill.app/logo.png">
 
     <!-- Favicons & App Icons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="image_010159.png">
+    <link rel="shortcut icon" href="image_010159.png">
 
     <!-- Structured Data for Rich Snippets -->
     <script type="application/ld+json">
@@ -81,7 +81,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Space Grotesk', sans-serif;
-            cursor: none; /* Custom cursor */
+            cursor: none; /* Custom cursor for desktop */
         }
 
         body {
@@ -139,6 +139,13 @@
             width: 40px; height: 40px;
             border: 2px solid var(--primary);
             transition: width 0.2s, height 0.2s, background-color 0.2s, opacity 0.2s ease;
+        }
+
+        /* Disable Custom Cursor on Touch Devices for Better Mobile UX */
+        @media (hover: none) and (pointer: coarse) {
+            .cursor-dot, .cursor-outline { display: none !important; }
+            * { cursor: auto !important; }
+            .interactive-hover { cursor: pointer !important; }
         }
 
         /* Typography & Globals */
@@ -227,27 +234,35 @@
             left: 100%;
         }
 
+        /* Mobile Nav Optimization */
+        @media (max-width: 768px) {
+            nav { padding: 1rem 5%; }
+            .brand { font-size: 1.1rem; }
+            .nav-logo-img { width: 32px; height: 32px; gap: 8px;}
+            .btn-glitch { padding: 0.6rem 1rem; font-size: 0.8rem; }
+        }
+
         /* Hero */
         .hero {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 0 5%;
+            padding: 8rem 5% 4rem;
             position: relative;
         }
 
         .hero h1 {
-            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-size: clamp(2.5rem, 8vw, 5rem);
             line-height: 1.2;
             margin-bottom: 1.5rem;
             text-shadow: 0 0 40px rgba(255,255,255,0.1);
         }
 
         .hero p {
-            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            font-size: clamp(1rem, 4vw, 1.2rem);
             color: var(--text-muted);
             max-width: 600px;
             margin-bottom: 3rem;
@@ -258,16 +273,20 @@
         .dna-container {
             margin-top: 2rem;
             display: flex;
-            gap: 15px;
+            gap: 8px;
             height: 60px;
             align-items: flex-end;
+            justify-content: center;
+            width: 100%;
+            max-width: 300px;
         }
         .dna-bar {
-            width: 8px;
+            width: 6px;
             background: var(--surface-border);
             border-radius: 10px;
             position: relative;
             overflow: hidden;
+            flex: 1;
         }
         .dna-fill {
             position: absolute;
@@ -279,15 +298,15 @@
 
         /* Gamified Features */
         .features {
-            padding: 10rem 5%;
+            padding: 8rem 5%;
             max-width: 1400px;
             margin: 0 auto;
         }
 
         .grid-3d {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
             perspective: 1000px;
         }
 
@@ -295,7 +314,7 @@
             background: var(--bg-panel);
             border: 1px solid rgba(255,255,255,0.05);
             border-radius: 20px;
-            padding: 3rem 2rem;
+            padding: 2.5rem 1.5rem;
             transform-style: preserve-3d;
             transition: transform 0.1s;
             position: relative;
@@ -335,8 +354,8 @@
 
         /* Interactive Hot Take Section */
         .hot-take-demo {
-            margin: 10rem 5%;
-            padding: 5rem;
+            margin: 8rem 5%;
+            padding: 4rem 2rem;
             background: linear-gradient(135deg, rgba(255, 81, 47, 0.05), rgba(0, 201, 255, 0.05));
             border-radius: 30px;
             border: 1px solid rgba(255,255,255,0.05);
@@ -349,23 +368,32 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 2rem;
+            gap: 1.5rem;
             margin-top: 3rem;
             flex-wrap: wrap;
         }
 
         .vote-btn {
-            padding: 1.5rem 3rem;
+            padding: 1.2rem 2.5rem;
             border-radius: 50px;
             border: none;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: white;
             transition: transform 0.2s, filter 0.2s;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
         }
+        
+        @media (max-width: 768px) {
+            .hot-take-demo { padding: 3rem 1.5rem; margin: 4rem 5%; }
+            .hot-take-demo h3 { font-size: 1.2rem !important; }
+            .vs-container { flex-direction: column; gap: 1rem; }
+            .vote-btn { width: 100%; padding: 1rem; font-size: 1rem; }
+        }
+
         .vote-btn.fire {
             background: linear-gradient(45deg, #FF512F, #DD2476);
             box-shadow: 0 10px 30px rgba(255, 81, 47, 0.3);
@@ -398,16 +426,17 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 5rem;
+            gap: 4rem;
             max-width: 1400px;
             margin: 0 auto;
         }
         @media(max-width: 900px) {
-            .editz-section { flex-direction: column; text-align: center; }
+            .editz-section { flex-direction: column; text-align: center; gap: 3rem; }
         }
 
         .phone-mockup {
-            width: 300px;
+            width: 100%;
+            max-width: 300px;
             height: 600px;
             border: 12px solid #222;
             border-radius: 40px;
@@ -417,7 +446,12 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255, 46, 99, 0.2);
             transform: rotate(-5deg);
             transition: transform 0.5s ease;
+            margin: 0 auto;
         }
+        @media (max-width: 400px) {
+            .phone-mockup { height: 500px; transform: rotate(0deg); }
+        }
+        
         .phone-mockup:hover {
             transform: rotate(0deg) scale(1.05);
         }
@@ -458,7 +492,8 @@
             align-items: center;
         }
         @media(max-width: 900px) {
-            .why-join-section { grid-template-columns: 1fr; text-align: center; }
+            .why-join-section { grid-template-columns: 1fr; text-align: center; padding: 5rem 5%; }
+            .why-join-section h2 { font-size: 2.5rem !important; }
         }
         .benefit-item {
             display: flex;
@@ -481,7 +516,7 @@
         }
         
         .faq-section {
-            padding: 5rem 5% 10rem;
+            padding: 5rem 5% 8rem;
             max-width: 900px;
             margin: 0 auto;
         }
@@ -496,7 +531,7 @@
             background: none;
             border: none;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             display: flex;
             justify-content: space-between;
@@ -504,7 +539,7 @@
             transition: color 0.3s;
         }
         .faq-question:hover { color: var(--secondary); }
-        .faq-icon { transition: transform 0.3s; }
+        .faq-icon { transition: transform 0.3s; flex-shrink: 0; }
         .faq-item.active .faq-icon { transform: rotate(180deg); color: var(--secondary); }
         .faq-answer {
             max-height: 0;
@@ -514,7 +549,7 @@
             line-height: 1.6;
         }
         .faq-item.active .faq-answer {
-            max-height: 300px;
+            max-height: 400px; /* Increased to allow longer text on mobile wrapping */
             padding-bottom: 1.5rem;
         }
 
@@ -563,7 +598,7 @@
 
         footer {
             text-align: center;
-            padding: 4rem;
+            padding: 4rem 5%;
             border-top: 1px solid rgba(255,255,255,0.05);
             margin-top: 5rem;
             color: var(--text-muted);
@@ -587,16 +622,24 @@
             display: flex; justify-content: center; align-items: center;
             opacity: 0; pointer-events: none;
             transition: opacity 0.4s ease;
+            padding: 5%;
         }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         .modal-content {
             background: var(--bg-panel); border: 1px solid var(--border-glow);
-            border-radius: 20px; padding: 3rem; max-width: 500px; width: 90%;
+            border-radius: 20px; padding: 3rem; max-width: 500px; width: 100%;
             text-align: center; transform: translateY(30px) scale(0.95);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 20px 60px rgba(255, 46, 99, 0.2);
             position: relative;
         }
+        
+        @media (max-width: 768px) {
+            .modal-content { padding: 2.5rem 1.5rem; }
+            .modal-content h2 { font-size: 1.5rem !important; }
+            .modal-content p { font-size: 0.9rem; }
+        }
+
         .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
         .modal-close {
             position: absolute; top: 15px; right: 15px;
@@ -788,7 +831,7 @@
 
     <section class="editz-section reveal-text">
         <div style="flex: 1;">
-            <h2 style="font-size: 3rem; margin-bottom: 1.5rem;">The Editz Feed</h2>
+            <h2 style="font-size: clamp(2.5rem, 6vw, 3rem); margin-bottom: 1.5rem;">The Editz Feed</h2>
             <p style="color: var(--text-muted); font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
                 A premium, infinite canvas dedicated to creator-driven cinematic highlights. Scored with AI-powered audio libraries. 
                 <br><br>
@@ -834,7 +877,7 @@
 
     <section class="why-join-section reveal-text">
         <div>
-            <h2 style="font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; margin-bottom: 1.5rem;">Why Join The <br><span style="color: var(--secondary);">Inner Circle?</span></h2>
+            <h2 style="font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.1; margin-bottom: 1.5rem;">Why Join The <br><span style="color: var(--secondary);">Inner Circle?</span></h2>
             <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem;">The era of scrolling endlessly through streaming menus is over. FlixNChill is built for those who want to experience cinema, not just consume it.</p>
             <button class="btn-glitch interactive-hover" onclick="openModal()">Secure Your Handle</button>
         </div>
@@ -932,8 +975,8 @@
         // -----------------------------------------
         // Supabase Waitlist Logic
         // -----------------------------------------
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // Replace with your URL
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Replace with your Anon Key
+        const SUPABASE_URL = 'https://yrjatzaruqzxoglefxbs.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyamF0emFydXF6eG9nbGVmeGJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3ODQzOTMsImV4cCI6MjA4NTM2MDM5M30.-tnHT_OaIMdU-E1pwBl2JLaHaC14NHYHGjVnd99K32Q';
         
         // Initialize securely so UI continues working smoothly if keys aren't added yet
         let supabaseClient = null;
@@ -1017,46 +1060,49 @@
         const cursorDot = document.querySelector('.cursor-dot');
         const cursorOutline = document.querySelector('.cursor-outline');
         
-        window.addEventListener('mousemove', (e) => {
-            const posX = e.clientX;
-            const posY = e.clientY;
-            
-            cursorDot.style.left = `${posX}px`;
-            cursorDot.style.top = `${posY}px`;
-            
-            // Add slight delay for outline
-            cursorOutline.animate({
-                left: `${posX}px`,
-                top: `${posY}px`
-            }, { duration: 500, fill: "forwards" });
-        });
+        // Prevent custom cursor logic on touch devices completely
+        if (window.matchMedia("(pointer: fine)").matches) {
+            window.addEventListener('mousemove', (e) => {
+                const posX = e.clientX;
+                const posY = e.clientY;
+                
+                cursorDot.style.left = `${posX}px`;
+                cursorDot.style.top = `${posY}px`;
+                
+                // Add slight delay for outline
+                cursorOutline.animate({
+                    left: `${posX}px`,
+                    top: `${posY}px`
+                }, { duration: 500, fill: "forwards" });
+            });
 
-        document.querySelectorAll('.interactive-hover').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursorOutline.style.width = '60px';
-                cursorOutline.style.height = '60px';
-                cursorOutline.style.backgroundColor = 'rgba(255, 46, 99, 0.1)';
-                cursorOutline.style.borderColor = 'transparent';
+            document.querySelectorAll('.interactive-hover').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorOutline.style.width = '60px';
+                    cursorOutline.style.height = '60px';
+                    cursorOutline.style.backgroundColor = 'rgba(255, 46, 99, 0.1)';
+                    cursorOutline.style.borderColor = 'transparent';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursorOutline.style.width = '40px';
+                    cursorOutline.style.height = '40px';
+                    cursorOutline.style.backgroundColor = 'transparent';
+                    cursorOutline.style.borderColor = 'var(--primary)';
+                });
             });
-            el.addEventListener('mouseleave', () => {
-                cursorOutline.style.width = '40px';
-                cursorOutline.style.height = '40px';
-                cursorOutline.style.backgroundColor = 'transparent';
-                cursorOutline.style.borderColor = 'var(--primary)';
-            });
-        });
 
-        // Hide custom cursor and switch to default text pointer over input fields
-        document.querySelectorAll('input').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursorDot.style.opacity = '0';
-                cursorOutline.style.opacity = '0';
+            // Hide custom cursor and switch to default text pointer over input fields
+            document.querySelectorAll('input').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorDot.style.opacity = '0';
+                    cursorOutline.style.opacity = '0';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursorDot.style.opacity = '1';
+                    cursorOutline.style.opacity = '1';
+                });
             });
-            el.addEventListener('mouseleave', () => {
-                cursorDot.style.opacity = '1';
-                cursorOutline.style.opacity = '1';
-            });
-        });
+        }
 
         // -----------------------------------------
         // DNA Visualizer Generation & Animation
@@ -1073,46 +1119,54 @@
             dnaContainer.appendChild(bar);
         }
 
-        dnaContainer.addEventListener('mouseenter', () => {
+        // Support touch events for mobile hover effects
+        const triggerDnaAnimation = () => {
             document.querySelectorAll('.dna-fill').forEach((fill, index) => {
                 setTimeout(() => {
                     fill.style.height = `${Math.random() * 60 + 40}%`;
                 }, index * 50);
             });
-        });
-        dnaContainer.addEventListener('mouseleave', () => {
+        };
+        const resetDnaAnimation = () => {
             document.querySelectorAll('.dna-fill').forEach((fill) => {
                 fill.style.height = '0%';
             });
-        });
+        };
+        
+        dnaContainer.addEventListener('mouseenter', triggerDnaAnimation);
+        dnaContainer.addEventListener('touchstart', triggerDnaAnimation, {passive: true});
+        dnaContainer.addEventListener('mouseleave', resetDnaAnimation);
+        dnaContainer.addEventListener('touchend', resetDnaAnimation, {passive: true});
 
         // -----------------------------------------
-        // 3D Card Tilt Effect
+        // 3D Card Tilt Effect (Desktop Only)
         // -----------------------------------------
-        const cards = document.querySelectorAll('.card-3d');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+        if (window.matchMedia("(pointer: fine)").matches) {
+            const cards = document.querySelectorAll('.card-3d');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // Update CSS variables for the radial gradient glow
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                    
+                    // Calculate rotation
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -10;
+                    const rotateY = ((x - centerX) / centerX) * 10;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
                 
-                // Update CSS variables for the radial gradient glow
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-                
-                // Calculate rotation
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -10;
-                const rotateY = ((x - centerX) / centerX) * 10;
-                
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+                });
             });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-            });
-        });
+        }
 
         // -----------------------------------------
         // Scroll Reveal Animations
