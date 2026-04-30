@@ -124,8 +124,9 @@
             top: 0; left: 0;
             transform: translate(-50%, -50%);
             border-radius: 50%;
-            z-index: 9999;
+            z-index: 99999; /* Increased to sit securely above the modal overlay (10000) */
             pointer-events: none;
+            transition: opacity 0.2s ease;
         }
         .cursor-dot {
             width: 8px; height: 8px;
@@ -134,7 +135,7 @@
         .cursor-outline {
             width: 40px; height: 40px;
             border: 2px solid var(--primary);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            transition: width 0.2s, height 0.2s, background-color 0.2s, opacity 0.2s ease;
         }
 
         /* Typography & Globals */
@@ -605,6 +606,7 @@
             background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 8px; color: white; font-family: 'Space Grotesk';
             font-size: 1rem; outline: none; transition: border-color 0.3s, box-shadow 0.3s;
+            cursor: text !important; /* Force text cursor for inputs to make typing UX easy */
         }
         .neon-input:focus {
             border-color: var(--secondary);
@@ -903,10 +905,9 @@
             </button>
             <div id="modal-form-view">
                 <h2 style="font-size: 1.8rem; margin-bottom: 1rem;">SECURE ACCESS</h2>
-                <p style="color: var(--text-muted);">Enter your name and comm-link to join the early access queue.</p>
+                <p style="color: var(--text-muted);">Enter your comm-link to join the early access queue.</p>
                 
                 <form id="waitlist-form" onsubmit="handleWaitlistSubmit(event)">
-                    <input type="text" id="waitlist-name" class="neon-input interactive-hover" placeholder="ENTER_NAME" required style="margin-bottom: 0;">
                     <input type="email" id="waitlist-email" class="neon-input interactive-hover" placeholder="ENTER_EMAIL@DOMAIN.COM" required>
                     <button type="submit" class="btn-glitch interactive-hover" style="width: 100%;" id="waitlist-submit-btn">Lock In</button>
                 </form>
@@ -928,8 +929,8 @@
         // -----------------------------------------
         // Supabase Waitlist Logic
         // -----------------------------------------
-        const SUPABASE_URL = 'https://yrjatzaruqzxoglefxbs.supabase.co'; // Replace with your URL
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyamF0emFydXF6eG9nbGVmeGJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3ODQzOTMsImV4cCI6MjA4NTM2MDM5M30.-tnHT_OaIMdU-E1pwBl2JLaHaC14NHYHGjVnd99K32Q'; // Replace with your Anon Key
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // Replace with your URL
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Replace with your Anon Key
         
         // Initialize securely so UI continues working smoothly if keys aren't added yet
         let supabaseClient = null;
@@ -939,7 +940,6 @@
 
         const modal = document.getElementById('waitlist-modal');
         const msgEl = document.getElementById('waitlist-msg');
-        const nameInput = document.getElementById('waitlist-name');
         const emailInput = document.getElementById('waitlist-email');
         const submitBtn = document.getElementById('waitlist-submit-btn');
         const formView = document.getElementById('modal-form-view');
@@ -947,7 +947,7 @@
 
         function openModal() {
             modal.classList.add('active');
-            setTimeout(() => nameInput.focus(), 100);
+            setTimeout(() => emailInput.focus(), 100);
         }
 
         function closeModal() {
@@ -955,7 +955,6 @@
             setTimeout(() => {
                 msgEl.innerText = '';
                 msgEl.className = 'waitlist-msg';
-                nameInput.value = '';
                 emailInput.value = '';
                 formView.style.display = 'block';
                 successView.style.display = 'none';
@@ -964,7 +963,6 @@
 
         async function handleWaitlistSubmit(e) {
             e.preventDefault();
-            const name = nameInput.value.trim();
             const email = emailInput.value.trim();
             
             if(!supabaseClient) {
@@ -976,7 +974,6 @@
                 setTimeout(() => {
                     formView.style.display = 'none';
                     successView.style.display = 'block';
-                    nameInput.value = '';
                     emailInput.value = '';
                     submitBtn.innerText = "LOCK IN";
                 }, 1500);
@@ -991,7 +988,6 @@
                 const { data, error } = await supabaseClient
                     .from('waitlist')
                     .insert([{ 
-                        name: name,
                         email: email
                     }]);
 
@@ -1000,7 +996,6 @@
                 // Show Success Pop-up UI
                 formView.style.display = 'none';
                 successView.style.display = 'block';
-                nameInput.value = '';
                 emailInput.value = '';
                 
             } catch (error) {
@@ -1045,6 +1040,18 @@
                 cursorOutline.style.height = '40px';
                 cursorOutline.style.backgroundColor = 'transparent';
                 cursorOutline.style.borderColor = 'var(--primary)';
+            });
+        });
+
+        // Hide custom cursor and switch to default text pointer over input fields
+        document.querySelectorAll('input').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorDot.style.opacity = '0';
+                cursorOutline.style.opacity = '0';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorDot.style.opacity = '1';
+                cursorOutline.style.opacity = '1';
             });
         });
 
